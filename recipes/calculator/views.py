@@ -18,18 +18,14 @@ DATA = {
         'сыр, ломтик': 1,
         'помидор, ломтик': 1,
     },
-    # Вы можете добавить свои рецепты здесь
 }
 
 def recipe_view(request, recipe_name):
-    # Проверяем, существует ли запрашиваемый рецепт
     if recipe_name not in DATA:
         raise Http404("Рецепт не найден")
 
-    # Получаем рецепт из DATA
     recipe = DATA[recipe_name]
 
-    # Получаем параметр servings из запроса
     servings = request.GET.get('servings', 1)
 
     try:
@@ -37,15 +33,12 @@ def recipe_view(request, recipe_name):
         if servings < 1:
             raise ValueError("Количество порций должно быть положительным")
     except ValueError:
-        servings = 1  # Если не удалось преобразовать или значение < 1, используем 1
+        servings = 1
 
-    # Вычисляем количество ингредиентов для указанного количества порций
     adjusted_recipe = {ingredient: quantity * servings for ingredient, quantity in recipe.items()}
 
-    # Создаем контекст для рендеринга
     context = {
         'recipe': adjusted_recipe,
     }
 
-    # Возвращаем отрендеренный шаблон с контекстом
     return render(request, 'calculator/index.html', context)
